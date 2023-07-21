@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% load nutrition_tags %}
+{% block body %}
+<div class="mySmoothies">
+  <h1>Custom Smoothies</h1>
+  <ul>
+    {% for smoothie in smoothies %}
+    <li>
+      <a class="smoothie_name" href="{% url 'view_smoothie' smoothie_id=smoothie.id %}">{{ smoothie.name }}</a>
+      <a class="smoothie_addFruit" href="{% url 'index_smoothie_id' smoothie_id=smoothie.id %}">Add fruits to this smoothie</a>
+
+      {% if request.user == smoothie.user %}
+        <form method="post" style="display:inline;">
+          {% csrf_token %}
+          <input type="hidden" name="delete_smoothie_id" value="{{ smoothie.id }}">
+          <button type="submit">Delete</button>
+        </form>
+      {% endif %}
+
+      <form method="post" style="display:inline;">
+        {% csrf_token %}
+        <input type="hidden" name="rate_smoothie_id" value="{{ smoothie.id }}">
+        <label class="smoothie_rating" for="rating">Rate this smoothie:</label>
+        <select name="rating" id="rating">
+          <option value="1">1 star</option>
+          <option value="2">2 stars</option>
+          <option value="3">3 stars</option>
+          <option value="4">4 stars</option>
+          <option value="5">5 stars</option>
+        </select>
+        <button type="submit">Submit</button>
+      </form>
+    {% with smoothie|average_rating as avg_rating %}
+      {% if avg_rating != "N/A" %}
+        <p class="average_rating">Average rating: {{ avg_rating }} Stars</p>
+      {% endif %}
+      <hr/>
+    {% endwith %}
+    </li>
+    {% empty %}
+    <li>No smoothies created yet.</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

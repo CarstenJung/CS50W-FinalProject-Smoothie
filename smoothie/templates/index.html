@@ -1,0 +1,103 @@
+{% extends "layout.html" %} {% load nutrition_tags %}{% block body %}
+<div class="index_search">
+  <h1>Smoothie</h1>
+  <p>Find your favorite fruits</p>
+<form method="post" id="search-form" data-url="{% url 'index' %}">
+  {% csrf_token %}
+  <input
+    type="text"
+    name="query"
+    placeholder="fruit search"
+    id="id_query"
+    class="input_size"
+    required
+  />
+  <button type="submit">Search</button>
+  {% if smoothie_id %}
+  <input type="hidden" name="smoothie_id" value="{{ smoothie_id }}" />
+  {% endif %}
+</form>
+</div>
+
+{% if foods %}
+<div id="csrf-token" style="display:none;">{% csrf_token %}</div>
+<ul>
+  {% for food in foods %} {% if forloop.first %}
+  <div class="index_search_result" id="search-results">
+    <h2><a href="#">{{ food.description }}</a></h2>
+    <p class="index_info">
+      <strong>Note:</strong> The nutrient values displayed below are based on a
+      100g serving.
+    </p>
+    <p>
+      Calories: {{ food.foodNutrients|get_nutrient_value_by_name:"Energy" }}
+    </p>
+    <p>Protein: {{ food.foodNutrients|get_nutrient_value_by_name:"Protein"}}</p>
+    <p>
+      Calcium: {{ food.foodNutrients|get_nutrient_value_by_name:"Calcium, Ca" }}
+    </p>
+    <p>Iron: {{ food.foodNutrients|get_nutrient_value_by_name:"Iron, Fe" }}</p>
+    <p>Vitamin A: {{ food.foodNutrients|get_nutrient_value_by_id:"1104" }}</p>
+    <p>Vitamin C: {{ food.foodNutrients|get_nutrient_value_by_id:1162 }}</p>
+    <p>
+      Sodium: {{ food.foodNutrients|get_nutrient_value_by_name:"Sodium, Na" }}
+    </p>
+    <p>Dietary Fiber: {{ food.foodNutrients|get_nutrient_value_by_id:1079 }}</p>
+    <p>Total Sugars: {{ food.foodNutrients|get_nutrient_value_by_id:2000 }}</p>
+    <p>
+      Potassium: {{ food.foodNutrients|get_nutrient_value_by_name:"Potassium, K"}}
+    </p>
+    {% if smoothie_id %}
+    <form
+      method="post"
+      action="{% url 'view_smoothie' smoothie_id=smoothie_id %}"
+    >
+      {% csrf_token %}
+      <input type="hidden" name="fdc_id" value="{{ food.fdcId }}" />
+      <input type="hidden" name="description" value="{{ food.description }}" />
+      <button type="submit">Add to Smoothie</button>
+    </form>
+    {% endif %}
+  </div>
+  {% endif %} {% endfor %}
+</ul>
+{% endif %} {% endblock %}
+{% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+  const searchForm = document.getElementById("search-form");
+  const csrfToken = document.getElementById("csrf-token").firstElementChild
+    .value;
+  const searchResults = document.getElementById("search-results");
+
+  searchForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const formData = new FormData(searchForm);
+    formData.append("csrfmiddlewaretoken", csrfToken);
+    formData.append("quantity", document.getElementById("quantity").value); // Add this line
+    const searchUrl = searchForm.getAttribute("data-url");
+
+    fetch(searchUrl, {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.text())
+      .then((html) => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+        const newSearchResults = doc.getElementById("search-results");
+
+        if (newSearchResults) {
+          searchResults.innerHTML = newSearchResults.innerHTML;
+        } else {
+          searchResults.innerHTML = "";
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching search results:", error);
+      });
+  });
+});
+</script>
+{% endblock %}

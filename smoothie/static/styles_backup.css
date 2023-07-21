@@ -1,0 +1,235 @@
+
+html, body {
+  min-height: 100vh;
+}
+
+body {
+  background: hsla(198, 63%, 45%, 1);
+  background: linear-gradient(
+    90deg,
+    hsla(198, 63%, 45%, 1) 0%,
+    hsla(126, 89%, 71%, 1) 100%,
+    hsla(0, 0%, 96%, 1) 100%
+  );
+  background: -moz-linear-gradient(
+    90deg,
+    hsla(198, 63%, 45%, 1) 0%,
+    hsla(126, 89%, 71%, 1) 100%,
+    hsla(0, 0%, 96%, 1) 100%
+  );
+  background: -webkit-linear-gradient(
+    90deg,
+    hsla(198, 63%, 45%, 1) 0%,
+    hsla(126, 89%, 71%, 1) 100%,
+    hsla(0, 0%, 96%, 1) 100%
+  );
+  filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#2B91BD", endColorstr="#72F77F", GradientType=1 );
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 100%;
+  font-family: 'Lato', sans-serif;
+  margin: 0;
+}
+
+
+.input_size,
+#id_name,
+#id_query {
+    padding: .5em .2em;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  font-weight: bold;
+  padding: 0;
+}
+
+nav ul li {
+  display: inline-block;
+  padding: 0 30px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #111;
+}
+
+
+nav ul li:hover {
+  color: black;
+  text-decoration: underline;
+}
+
+/* Index */
+.index_search,
+.create_smoothie_form,
+.mySmoothies,
+.view_smoothie {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 7%;
+  flex-direction: column;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.index_search h1,
+.create_smoothie_form h1,
+.mySmoothies h1,
+.view_smoothie h1 {
+  font-size: 6rem;
+  margin: 0;
+}
+
+.view_smoothie h6 {
+    font-size: 1.3em;
+    font-weight: 400;
+    font-style: italic;
+    margin: 0 0 1rem 0;
+}
+
+.mySmoothies h1 {
+  padding-bottom: 3rem;
+}
+
+.index_search button,
+.create_smoothie_form button,
+.mySmoothies button,
+.view_smoothie .vs_btn,
+.login button,
+.register button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background-color: #ff6e40;
+  border: none;
+  border-radius: 30px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.index_search_result {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 3rem;
+}
+
+.index_search_result p {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: .3em;
+}
+
+.index_info {
+  background: lightgrey;
+  padding: 1rem;
+  margin-top: 0;
+}
+
+.create_smoothie_form button {
+  display: block;
+  margin: auto;
+}
+
+.nutrition_info li {
+    padding: .3em;
+}
+
+/* Create Smoothie */
+#id_name {
+  margin-top: 1rem;
+}
+
+/* MySmoothies */
+.mySmoothies ul {
+  list-style: none;
+}
+
+.smoothie_name {
+  font-size: 1.8rem;
+  color: #111;
+  text-decoration: none;
+  margin-right: 1rem;
+}
+
+.smoothie_name:hover {
+  color: black;
+  text-decoration: underline;
+}
+
+.smoothie_addFruit {
+  font-weight: 400;
+  color: #111;
+  margin-right: 100px;
+}
+
+.smoothie_rating {
+  display: block;
+  margin: 1rem 0 1rem 0;
+}
+
+#rating {
+    padding: 0.1rem 0.2rem;
+    font-size: 1rem;
+}
+
+.average_rating {
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.3rem;
+}
+
+.nutrition_info ul,
+.nutrition_info {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.nutrition_info {
+  margin-top: 2rem;
+}
+
+.nutrition_info h2 {
+    margin: 0;
+}
+
+/* MySmoothie Detail */
+#ingredient-details {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+  max-width: 90%;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
+/* Register Login*/
+.register,
+.login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 7%;
+  flex-direction: column;
+  font-weight: bold;
+  font-style: italic;
+}

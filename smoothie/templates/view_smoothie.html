@@ -1,0 +1,138 @@
+{% extends 'layout.html' %}
+{% load nutrition_tags %}
+{% block body %}
+<div class="view_smoothie">
+  <h1 style="margin: 0">{{ smoothie.name }}</h1>
+  <h6>Click ingredients for more info.</h6>
+  <ul>
+    {% for ingredient in ingredients %}
+    <li data-fdc-id="{{ ingredient.fdc_id }}" onclick="showNutrientData(event)">
+      {{ ingredient.quantity }} x {{ ingredient.description }} ({{ ingredient.grams|multiply:100|floatformat:0 }} grams)
+      <form method="post" style="display: inline">
+        {% csrf_token %}
+        <input type="hidden" name="delete_ingredient_id" value="{{ ingredient.id }}" />
+        <button type="submit" style="background: none; border: none; color: blue">Delete</button>
+      </form>
+    </li>
+    {% endfor %}
+  </ul>
+  <div id="ingredient-details" style="display: none"></div>
+  <form method="post">
+    {% csrf_token %}
+    <input type="text" name="{{ form.query.name }}" placeholder="fruit search" id="{{ form.query.auto_id }}" required />
+    <button class="vs_btn" type="submit">Search</button>
+  </form>
+  {% if foods %}
+  <ul>
+    {% for food in foods %}
+    <div>
+      <h2>{{ food.description }}</h2>
+      <p><strong>Note:</strong> The nutrient values displayed below are based on a 100g serving.</p>
+      <p>Calories: {{ food.foodNutrients|get_nutrient_value_by_name:"Energy" }} kcal</p>
+      <p>Protein: {{ food.foodNutrients|get_nutrient_value_by_name:"Protein"}}</p>
+      <p>Calcium: {{ food.foodNutrients|get_nutrient_value_by_name:"Calcium, Ca" }}</p>
+      <p>Iron: {{ food.foodNutrients|get_nutrient_value_by_name:"Iron, Fe" }}</p>
+      <p>Vitamin A: {{ food.foodNutrients|get_nutrient_value_by_id:"1104" }}</p>
+      <p>Vitamin C: {{ food.foodNutrients|get_nutrient_value_by_id:1162 }}</p>
+      <p>Sodium: {{ food.foodNutrients|get_nutrient_value_by_name:"Sodium, Na" }}</p>
+      <p>Potassium: {{ food.foodNutrients|get_nutrient_value_by_name:"Potassium, K" }}</p>
+      <p>Dietary Fiber: {{ food.foodNutrients|get_nutrient_value_by_id:1079 }}</p>
+      <p>Total Sugars: {{ food.foodNutrients|get_nutrient_value_by_id:2000 }}</p>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="fdc_id" value="{{ food.fdcId }}" />
+        <input type="hidden" name="description" value="{{ food.description }}" />
+        <label for="quantity">Quantity:</label>
+        <input type="number" name="quantity" id="quantity" min="1" value="1" />
+        <label for="grams">Weight (g):</label>
+        <input type="number" name="grams" id="grams" min="1" value="100" step="1" />
+        <button type="submit">Add to smoothie</button>
+      </form>
+    </div>
+    {% endfor %}
+  </ul>
+  {% endif %}
+{% if ingredients %}
+<div class="nutrition_info">
+  <h2>Nutritional Information</h2>
+  <ul>
+    <p class="index_info"><strong>Note:</strong> The nutrient values displayed below are based on a 100g serving per Fruit.</p>
+    <li>Energy: {{ total_nutrients|get_total_nutrient_value_by_id:'1008'|calculate_nutrient_value:grams }} kcal</li>
+    <li>Protein: {{ total_nutrients|get_total_nutrient_value_by_id:'1003'|calculate_nutrient_value:grams }} g</li>
+    <li>Calcium: {{ total_nutrients|get_total_nutrient_value_by_id:'1087'|calculate_nutrient_value:grams }} mg</li>
+    <li>Iron: {{ total_nutrients|get_total_nutrient_value_by_id:'1089'|calculate_nutrient_value:grams }} mg</li>
+    <li>Vitamin A: {{ total_nutrients|get_total_nutrient_value_by_id:'1104'|calculate_nutrient_value:grams }} IU</li>
+    <li>Vitamin C: {{ total_nutrients|get_total_nutrient_value_by_id:'1162'|calculate_nutrient_value:grams }} mg</li>
+    <li>Sodium: {{ total_nutrients|get_total_nutrient_value_by_id:'1093'|calculate_nutrient_value:grams }} mg</li>
+    <li>Fiber: {{ total_nutrients|get_total_nutrient_value_by_id:'1079'|calculate_nutrient_value:grams }} g</li>
+    <li>Sugars: {{ total_nutrients|get_total_nutrient_value_by_id:'2000'|calculate_nutrient_value:grams }} g</li>
+    <li>Potassium: {{ total_nutrients|get_total_nutrient_value_by_id:'1092'|calculate_nutrient_value:grams }} mg</li>
+  </ul>
+</div>
+{% endif %}
+</div>
+  {% endblock %} {% block extra_js %}
+  <script>
+    function showNutrientData(event) {
+      const fdcId = event.target.dataset.fdcId;
+      const apiKey = "elhyRfYJ42dSR6zWHJXgOeU9zudQ7wfawa1hYFP8";
+      const url = `https://api.nal.usda.gov/fdc/v1/food/${fdcId}?api_key=${apiKey}`;
+
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          const nutrients = data.foodNutrients;
+
+          const details = document.getElementById("ingredient-details");
+          details.innerHTML = `
+                <button id="close-details" style="float: right;">Close</button>
+                <h3>${data.description}</h3>
+                <p><strong>Note:</strong> The nutrient values displayed below are based on a 100g serving.</p>
+                <p>Calories: ${getNutrientValueByName(
+                  nutrients,
+                  "Energy"
+                )} kcal </p>
+                <p>Protein: ${getNutrientValueByName(
+                  nutrients,
+                  "Protein"
+                )} g</p>
+                <p>Calcium: ${getNutrientValueByName(
+                  nutrients,
+                  "Calcium"
+                )} mg</p>
+                <p>Iron: ${getNutrientValueByName(nutrients, "Iron, Fe")} mg</p>
+                <p>Vitamin A: ${getNutrientValueById(nutrients, 1104)} IU</p>
+                <p>Vitamin C: ${getNutrientValueById(nutrients, 1162)} mg</p>
+                <p>Sodium: ${getNutrientValueByName(
+                  nutrients,
+                  "Sodium"
+                )} mg</p>
+                <p>Potassium: ${getNutrientValueById(nutrients, 1092)} mg</p>
+                <p>Dietary Fiber: ${getNutrientValueById(nutrients, 1079)} g</p>
+                <p>Total Sugars: ${getNutrientValueById(nutrients, 2000)} g</p>
+            `;
+          details.style.display = "block";
+
+          /*Pop Up Close btn */
+          document.getElementById('close-details').addEventListener('click', function () {
+            details.style.display = "none";
+          });
+        })
+        .catch((error) =>
+          console.error("Error fetching nutrient data:", error)
+        );
+    }
+
+
+
+    function getNutrientValueByName(nutrients, name) {
+      const nutrient = nutrients.find((n) => n.nutrient.name === name);
+      return nutrient ? nutrient.amount : "N/A";
+    }
+
+    function getNutrientValueById(nutrients, id) {
+      const nutrient = nutrients.find((n) => n.nutrient.id === id);
+      return nutrient ? nutrient.amount : "N/A";
+    }
+  </script>
+{% endblock %}

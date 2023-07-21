@@ -1,0 +1,33 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{% block title %}Smoothie App{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+
+    <link href="{% static 'styles.css' %}" rel="stylesheet" />
+    <script src="{% static 'main.js' %}"></script>
+  </head>
+
+  <body>
+    <nav>
+      <ul>
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'index' %}">Home</a></li>
+        <li><a href="{% url 'create_smoothie' %}">Create Smoothie</a></li>
+        <li><a href="{% url 'list_smoothies' %}">Custom Smoothies</a></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+         <li><span>Welcome, {{ user.username }}</span></li>
+        {% else %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+        <li><a href="{% url 'register' %}">Register</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+    <div class="body">{% block body %} {% endblock %}</div>
+    {% block extra_js %} {% endblock %}
+  </body>
+</html>
